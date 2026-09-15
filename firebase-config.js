@@ -13,13 +13,15 @@
    ========================================================= */
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyB9uzPjcgg0mG-CxF0pjj0iSJNSc-5OXlo",
+  authDomain: "palliative-care-9276e.firebaseapp.com",
+  projectId: "palliative-care-9276e",
+  storageBucket: "palliative-care-9276e.firebasestorage.app",
+  messagingSenderId: "177727727726",
+  appId: "1:177727727726:web:b6abb1ac1c02c4908a9e7f",
+  measurementId: "G-NEFGC0S3LG"
 };
+
 
 // แอปหลัก (ใช้งานทั่วไป: login, อ่าน/เขียนข้อมูล)
 firebase.initializeApp(firebaseConfig);
