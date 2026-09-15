@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function myProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // "ล็อกอินแล้ว" และบัญชียังไม่ถูกปิดใช้งาน (is_active != false)
+    function isActive() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && myProfile().is_active != false;
+    }
+
+    function isAdmin() {
+      return isActive() && myProfile().role == 'admin';
+    }
+
+    // ข้อมูลผู้ใช้งาน — อ่านได้เมื่อ login แล้ว, แก้ไขได้เฉพาะ Admin
+    match /users/{uid} {
+      allow read: if isActive();
+      allow write: if isAdmin();
+    }
+
+    // ตารางแปลง username -> uid (ไว้ค้นหาอีเมลสำหรับ sign-in ตอนยังไม่ login)
+    // ไม่มีข้อมูลลับอยู่ในนี้ (ไม่มีรหัสผ่าน) จึงเปิดให้อ่านได้แม้ยังไม่ login
+    match /usernames/{username} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ข้อมูลผู้ป่วยและประวัติการรักษา — เจ้าหน้าที่ที่ login แล้วทุกคนใช้งานได้
+    match /patients/{idCard} {
+      allow read, write: if isActive();
+    }
+
+    match /assessments/{docId} {
+      allow read, write: if isActive();
+    }
+  }
+}

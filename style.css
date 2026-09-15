@@ -1,0 +1,536 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap');
+
+:root {
+    --sidebar-bg: #0B132B;
+    --sidebar-hover: #1c2541;
+    --primary-blue: #2563EB;
+    --primary-hover: #1D4ED8;
+    --bg-main: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --input-bg: #F1F5F9;
+    --text-main: #1E293B;
+    --border-color: #E2E8F0;
+}
+
+body {
+    font-family: 'Prompt', 'Sarabun', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+}
+
+/* Layout Grid */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+}
+
+.hospital-logo {
+    width: 42px;
+    height: 42px;
+    background: #ffffff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.hospital-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #3b82f6;
+    border-radius: 10px;
+    font-size: 1.2rem;
+}
+
+.sidebar-menu .nav-link {
+    color: #94a3b8;
+    font-weight: 400;
+    transition: all 0.2s ease-in-out;
+}
+
+.sidebar-menu .nav-link:hover {
+    color: #ffffff;
+    background-color: var(--sidebar-hover);
+}
+
+.sidebar-menu .nav-link.active {
+    color: #ffffff !important;
+    background-color: var(--primary-blue);
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-logout {
+    background-color: #311329 !important;
+    color: #f87171 !important;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #4c1d3f !important;
+    color: #ef4444 !important;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 1.5rem 2.5rem;
+    max-width: calc(100vw - 260px);
+}
+
+.top-header {
+    background-color: var(--bg-main);
+    border-bottom: 1px solid transparent;
+}
+
+/* Card & Inputs */
+.custom-card {
+    border-radius: 16px;
+    background-color: var(--card-bg);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02) !important;
+}
+
+.custom-input {
+    background-color: var(--input-bg);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    color: #334155;
+    transition: all 0.2s;
+}
+
+.custom-input:focus {
+    background-color: #ffffff;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    color: #0f172a;
+}
+
+/* Section Divider */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.section-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.btn-outline-pill {
+    border: 1.5px solid var(--border-color);
+    color: #64748b;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.btn-check:checked + .btn-outline-pill {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+
+/* Filter Controls */
+.btn-filter {
+    background-color: #F1F5F9;
+    color: #475569;
+    border: 1px solid transparent;
+    border-radius: 50rem;
+    padding: 0.4rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-filter:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-filter.active {
+    background-color: var(--primary-blue) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.border-dashed {
+    border-style: dashed !important;
+}
+
+/* Accordion Custom */
+.custom-accordion .accordion-item {
+    border: 1px solid var(--border-color);
+    border-radius: 12px !important;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.custom-accordion .accordion-button:not(.collapsed) {
+    background-color: #eff6ff;
+    color: var(--primary-blue);
+    box-shadow: none;
+}
+
+.btn-outline-warning {
+    border-color: #f59e0b !important;
+    color: #d97706 !important;
+}
+.btn-outline-warning:hover {
+    background-color: #f59e0b !important;
+    color: #ffffff !important;
+}
+
+/* ---------------- User Management Page ---------------- */
+.btn-users-gradient {
+    background: linear-gradient(135deg, #6366f1, #7c3aed);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 8px 18px -4px rgba(124, 58, 237, 0.45);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-users-gradient:hover {
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 22px -4px rgba(124, 58, 237, 0.5);
+}
+
+.btn-users-gradient:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.role-badge-admin {
+    background-color: #ede9fe;
+    color: #7c3aed;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.role-badge-user {
+    background-color: #e0f2fe;
+    color: #0284c7;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.user-list-avatar {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    font-size: 0.9rem;
+}
+
+/* Password field with eye-toggle button positioned inside the input (ใช้ในหน้าจัดการผู้ใช้งาน) */
+.pw-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.pw-input-group .pw-field {
+    padding-right: 42px;
+    width: 100%;
+}
+
+.pw-toggle-btn {
+    position: absolute;
+    right: 10px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 1.05rem;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.pw-toggle-btn:hover {
+    color: #475569;
+}
+
+/* ---------------- Complication Searchable Dropdown (อาการแทรกซ้อน / โรคประจำตัว) ---------------- */
+.complication-dropdown-wrapper {
+    min-width: 0;
+}
+
+.complication-dropdown-btn {
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.complication-dropdown-menu {
+    display: none;
+    width: 100%;
+    max-height: 320px;
+    flex-direction: column;
+    padding: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.complication-dropdown-menu.show {
+    display: flex;
+}
+
+.complication-search-wrap {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.complication-options-list {
+    overflow-y: auto;
+    max-height: 260px;
+    padding: 4px 0;
+}
+
+.complication-group-header {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #94a3b8;
+    padding: 6px 16px 2px;
+    margin: 0;
+}
+
+.complication-option {
+    white-space: normal;
+    font-size: 0.9rem;
+}
+
+.complication-option.d-none,
+.complication-group-header.d-none {
+    display: none !important;
+}
+
+/* Responsive Handling */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+    }
+    .sidebar span, .sidebar-header h6, .sidebar-header small, .user-profile div, .sidebar div.text-secondary {
+        display: none;
+    }
+    .sidebar-header { justify-content: center; padding: 1rem 0; }
+    .main-content {
+        margin-left: 70px;
+        padding: 1rem;
+        max-width: calc(100vw - 70px);
+    }
+}
+
+/* Print Overrides */
+/* ============================================================
+   Formal Print Document (แบบบันทึกการประเมิน — สำหรับพิมพ์ PDF)
+   ใช้แนวทาง "แสดงเฉพาะ #formalPrintDoc ตอนพิมพ์ ซ่อนทุกอย่างอื่น"
+   แทนวิธี visibility เดิม เพื่อไม่ให้เกิดหน้าเปล่า/ข้อมูลตกหล่น
+   ============================================================ */
+#formalPrintDoc {
+    display: none;
+}
+
+.fp-page {
+    max-width: 800px;
+    margin: 0 auto;
+    color: #0f172a;
+    font-family: 'Prompt', 'Sarabun', sans-serif;
+}
+
+.fp-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 3px solid #0B132B;
+    padding-bottom: 12px;
+    margin-bottom: 10px;
+}
+
+.fp-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.fp-header-text h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    color: #0B132B;
+}
+
+.fp-header-text p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.fp-doc-title {
+    font-weight: 600 !important;
+    color: #2563EB !important;
+    margin-top: 6px !important;
+    font-size: 0.95rem !important;
+}
+
+.fp-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 14px;
+}
+
+.fp-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+}
+
+.fp-info-table td {
+    border: 1px solid #cbd5e1;
+    padding: 8px 10px;
+    vertical-align: top;
+}
+
+.fp-label {
+    background: #f1f5f9;
+    font-weight: 600;
+    color: #334155;
+    width: 22%;
+    white-space: nowrap;
+}
+
+.fp-value {
+    width: 28%;
+    color: #0f172a;
+}
+
+.fp-value-strong { font-weight: 700; }
+.fp-value-danger { color: #b91c1c; }
+
+.fp-tag {
+    display: inline-block;
+    background: #e2e8f0;
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin: 2px 4px 2px 0;
+    font-size: 0.78rem;
+}
+
+.fp-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2563EB;
+    border-bottom: 2px solid #2563EB;
+    padding-bottom: 4px;
+    margin: 18px 0 10px;
+}
+
+.fp-instruction-box, .fp-advice-box {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+    break-inside: avoid;
+}
+
+.fp-instruction-box h3, .fp-advice-box h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: #0f172a;
+}
+
+.fp-instruction-box p { margin: 0 0 10px; }
+.fp-instruction-box p:last-child { margin-bottom: 0; }
+.fp-advice-box { background: #fffbeb; border-color: #fde68a; }
+
+.fp-signature-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-top: 40px;
+    break-inside: avoid;
+}
+
+.fp-signature-box {
+    flex: 1;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.fp-sign-line {
+    border-bottom: 1px dashed #64748b;
+    height: 40px;
+    margin-bottom: 6px;
+}
+
+.fp-sign-date { color: #64748b; font-size: 0.78rem; margin-top: 2px; }
+
+.fp-footer-note {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 14mm 13mm;
+    }
+    /* ซ่อนทุกอย่างใน body ยกเว้นเอกสารสำหรับพิมพ์ */
+    body > *:not(#formalPrintDoc) {
+        display: none !important;
+    }
+    #formalPrintDoc {
+        display: block !important;
+    }
+}

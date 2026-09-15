@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>สร้างผู้ดูแลระบบคนแรก (ใช้ครั้งเดียว)</title>
+<style>
+  body{font-family:sans-serif;max-width:480px;margin:60px auto;padding:0 20px;}
+  input{display:block;width:100%;padding:10px;margin:8px 0;box-sizing:border-box;}
+  button{padding:10px 20px;background:#2563EB;color:#fff;border:none;border-radius:6px;cursor:pointer;}
+  #msg{margin-top:16px;white-space:pre-wrap;font-size:0.9rem;}
+  .warn{background:#fffbeb;border:1px solid #fde68a;padding:12px;border-radius:6px;font-size:0.85rem;margin-bottom:20px;}
+</style>
+</head>
+<body>
+<h2>สร้างผู้ดูแลระบบ (Admin) คนแรก</h2>
+<div class="warn">
+  ใช้หน้านี้ <b>ครั้งเดียว</b> ตอนตั้งค่าระบบใหม่ เพราะการเพิ่มผู้ใช้งานปกติต้องล็อกอินด้วยสิทธิ์ Admin
+  ก่อนอยู่แล้ว (ไก่กับไข่) — ก่อนใช้หน้านี้ ให้ไปแก้ไขกฎชั่วคราวใน Firestore &gt; Rules
+  ให้ collection "users" และ "usernames" เขียนได้เมื่อ signed in เฉย ๆ (ดูรายละเอียดใน README.md)
+  แล้วอย่าลืมเปลี่ยนกลับเป็นกฎเดิม (firestore.rules) หลังสร้างเสร็จ แล้ว<b>ลบไฟล์นี้ทิ้ง</b>ออกจากเว็บ
+</div>
+
+<input id="full_name" placeholder="ชื่อ-นามสกุล">
+<input id="username" placeholder="ชื่อผู้ใช้งาน (username)">
+<input id="email" placeholder="อีเมล (ไม่บังคับ)">
+<input id="phone" placeholder="เบอร์โทร (ไม่บังคับ)">
+<input id="password" type="password" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)">
+<button onclick="createAdmin()">สร้างบัญชี Admin</button>
+<div id="msg"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+async function createAdmin() {
+    const msg = document.getElementById('msg');
+    const full_name = document.getElementById('full_name').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!full_name || !username || password.length < 6) {
+        msg.textContent = 'กรุณากรอกชื่อ, username และรหัสผ่าน (อย่างน้อย 6 ตัวอักษร) ให้ครบ';
+        return;
+    }
+
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const authEmail = `${encodeURIComponent(username.toLowerCase())}@hospital.internal`;
+
+    try {
+        const existing = await db.collection('usernames').doc(username).get();
+        if (existing.exists) throw new Error('username นี้ถูกใช้ไปแล้ว');
+
+        const cred = await auth.createUserWithEmailAndPassword(authEmail, password);
+        const uid = cred.user.uid;
+
+        await db.collection('users').doc(uid).set({
+            full_name, username, email: email || null, phone: phone || null,
+            role: 'admin', is_active: true,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            last_login: null
+        });
+        await db.collection('usernames').doc(username).set({ uid });
+
+        msg.textContent = '✅ สร้างบัญชี Admin สำเร็จแล้ว! ตอนนี้ไปที่กฎ Firestore แล้วเปลี่ยนกลับเป็น firestore.rules ที่ให้มา จากนั้นลบไฟล์ seed-admin.html นี้ออก แล้วไป login.html เพื่อเข้าสู่ระบบได้เลย';
+    } catch (e) {
+        msg.textContent = '❌ เกิดข้อผิดพลาด: ' + (e.message || e);
+    }
+}
+</script>
+</body>
+</html>
