@@ -13,13 +13,13 @@
    ========================================================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB9uzPjcgg0mG-CxF0pjj0iSJNSc-5OXlo",
-  authDomain: "palliative-care-9276e.firebaseapp.com",
-  projectId: "palliative-care-9276e",
-  storageBucket: "palliative-care-9276e.firebasestorage.app",
-  messagingSenderId: "177727727726",
-  appId: "1:177727727726:web:b6abb1ac1c02c4908a9e7f",
-  measurementId: "G-NEFGC0S3LG"
+  apiKey: "AIzaSyAUasy_2gGRqjf6TBlY_WsI3lSu6GFg9Vk",
+  authDomain: "palliativecare-web-1e44c.firebaseapp.com",
+  projectId: "palliativecare-web-1e44c",
+  storageBucket: "palliativecare-web-1e44c.firebasestorage.app",
+  messagingSenderId: "340370698388",
+  appId: "1:340370698388:web:680d6f380435dc3bba8481",
+  measurementId: "G-NZPSSK8K68"
 };
 
 
