@@ -22,7 +22,6 @@ const firebaseConfig = {
   measurementId: "G-NZPSSK8K68"
 };
 
-
 // แอปหลัก (ใช้งานทั่วไป: login, อ่าน/เขียนข้อมูล)
 firebase.initializeApp(firebaseConfig);
 
