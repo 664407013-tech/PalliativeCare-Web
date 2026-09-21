@@ -10,28 +10,39 @@
     <!-- Google Fonts: Prompt & Sarabun -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=6">
+    <!-- ซ่อนหน้าไว้จนกว่าจะตรวจ session เสร็จ (ถ้า JS ถูกปิด จะแสดงตามปกติผ่าน noscript) -->
+    <style id="authHideStyle">html { visibility: hidden; }</style>
+    <noscript><style>html { visibility: visible !important; }</style></noscript>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js?v=1"></script>
+    <script src="treatment-calc.js?v=1"></script>
+    <script src="supabase-api.js?v=1"></script>
 </head>
 <body>
 
 <!-- ============ AUTH GUARD ============
-     ตรวจสอบ session ก่อนแสดงเนื้อหาหน้านี้ (ใช้ synchronous request
-     เพื่อกันไม่ให้เนื้อหาแวบขึ้นมาก่อนแล้วค่อย redirect)
-     หมายเหตุ: การป้องกันข้อมูลจริงเกิดขึ้นที่ api.php ฝั่งเซิร์ฟเวอร์
-     ส่วนนี้เป็นเพียงการ redirect ฝั่ง UI เพื่อประสบการณ์ที่ดีเท่านั้น -->
+     ซ่อนหน้าไว้ก่อน แล้วตรวจ session กับ Supabase — ถ้ายังไม่ได้ login ให้เด้งไปหน้า login.html
+     (ไม่แสดงเนื้อหาแวบขึ้นมาก่อน) หมายเหตุ: การป้องกันข้อมูลจริงอยู่ที่ Row Level Security ของ Supabase
+     ส่วนนี้เป็นเพียงการ redirect ฝั่ง UI เพื่อประสบการณ์ที่ดี -->
 <script>
     (function authGuard() {
-        try {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'api.php?action=check_session', false); // synchronous
-            xhr.send(null);
-            var data = JSON.parse(xhr.responseText);
-            if (!data.success || !data.authenticated) {
-                window.location.replace('login.html');
-            }
-        } catch (e) {
-            // เชื่อมต่อ API ไม่ได้ ให้ไปหน้า login เพื่อความปลอดภัย
-            window.location.replace('login.html');
-        }
+        var reveal = function () {
+            var hide = document.getElementById('authHideStyle');
+            if (hide) hide.remove();
+        };
+        var toLogin = function () { window.location.replace('login.html'); };
+
+        if (!window.api) { toLogin(); return; }
+
+        window.api.checkSession().then(function (data) {
+            if (data && data.success && data.authenticated) reveal(); else toLogin();
+        }).catch(toLogin);
+
+        // ถ้าออกจากระบบจากแท็บอื่น หรือ token หมดอายุและรีเฟรชไม่ได้ → กลับหน้า login
+        window.api.client.auth.onAuthStateChange(function (event) {
+            if (event === 'SIGNED_OUT') toLogin();
+        });
     })();
 </script>
 
@@ -666,12 +677,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Firebase SDK (compat, ใช้งานง่ายกับสคริปต์เดิมที่ไม่ใช้ ES module) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js"></script>
-<script src="api.js"></script>
 <!-- เอกสารสำหรับพิมพ์แบบทางการ (ถูกเติมเนื้อหาแบบไดนามิกก่อนสั่งพิมพ์) -->
 <div id="formalPrintDoc"></div>
 

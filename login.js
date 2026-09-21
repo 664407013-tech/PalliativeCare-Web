@@ -1,6 +1,6 @@
 // ตรวจสอบว่ามี session ค้างอยู่แล้วหรือไม่ ถ้ามีให้เข้าเว็บได้เลยไม่ต้อง login ซ้ำ
 (function checkExistingSession() {
-    apiCall('check_session')
+    api.checkSession()
         .then(data => {
             if (data.success && data.authenticated) {
                 window.location.replace('index.html');
@@ -61,11 +61,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
 
     setLoginLoading(true);
 
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('password', password);
-
-    apiCall('login', { body: formData })
+    api.login(username, password)
         .then(data => {
             if (data.success) {
                 window.location.href = 'index.html';

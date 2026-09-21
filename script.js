@@ -7,7 +7,7 @@ let currentHistoryResult = null;    // ผลลัพธ์จากหน้�
 
 // โหลดข้อมูลผู้ใช้งานปัจจุบันจาก session มาแสดงใน Sidebar และ Header
 function loadCurrentUser() {
-    apiCall('check_session')
+    api.checkSession()
         .then(data => {
             if (data.success && data.authenticated && data.user) {
                 const name = data.user.full_name || data.user.username || 'ผู้ใช้งาน';
@@ -45,7 +45,7 @@ loadCurrentUser();
 // ออกจากระบบ
 function logoutUser() {
     if (!confirm('ต้องการออกจากระบบหรือไม่?')) return;
-    apiCall('logout')
+    api.logout()
         .then(() => {
             window.location.href = 'login.html';
         })
@@ -138,7 +138,7 @@ function fetchOldPatient() {
 
     status.innerHTML = '<span class="text-primary"><i class="bi bi-hourglass-split"></i> กำลังค้นหาข้อมูล...</span>';
 
-    apiCall('get_patient', { params: { id_card: idCard } })
+    api.getPatient(idCard)
         .then(data => {
             if (data.success) {
                 document.getElementById('id_card').value = data.patient.id_card;
@@ -475,7 +475,7 @@ document.getElementById('assessmentForm').addEventListener('submit', function(e)
     clearAssessmentResult();
     setAssessLoading(true);
 
-    apiCall('save_assessment', { body: formData })
+    api.saveAssessment(formData)
     .then(data => {
         setAssessLoading(false);
         if (data.success) {
@@ -498,7 +498,7 @@ document.getElementById('editForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(this);
     
-    apiCall('update_assessment', { body: formData })
+    api.updateAssessment(formData)
     .then(data => {
         if (data.success) {
             const editModalEl = document.getElementById('editModal');
@@ -748,15 +748,12 @@ function loadArchive() {
     const container = document.getElementById('archiveAccordionContainer');
     container.innerHTML = '<div class="text-center py-4 text-primary"><i class="bi bi-hourglass-split fs-4 d-block mb-2"></i>กำลังโหลดข้อมูลตามตัวกรอง...</div>';
 
-    const params = new URLSearchParams({
-        action: 'get_archive',
+    api.getArchive({
         search_id: searchId,
         filter_type: currentFilterType,
         start_date: startDate,
         end_date: endDate
-    });
-
-    apiCall('get_archive', { params })
+    })
         .then(data => {
             container.innerHTML = '';
             
@@ -793,9 +790,9 @@ function loadArchive() {
                             </td>
                             <td class="text-end">
                                 <div class="btn-group btn-group-sm shadow-sm">
-                                    <button class="btn btn-outline-primary rounded-start-pill px-3 fw-medium" onclick="viewHistory('${row.id}')"><i class="bi bi-eye"></i> ดู</button>
-                                    <button class="btn btn-outline-warning px-3 fw-medium text-dark" onclick="editHistory('${row.id}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-                                    <button class="btn btn-outline-danger rounded-end-pill px-2" onclick="deleteHistory('${row.id}')"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-outline-primary rounded-start-pill px-3 fw-medium" onclick="viewHistory(${row.id})"><i class="bi bi-eye"></i> ดู</button>
+                                    <button class="btn btn-outline-warning px-3 fw-medium text-dark" onclick="editHistory(${row.id})"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+                                    <button class="btn btn-outline-danger rounded-end-pill px-2" onclick="deleteHistory(${row.id})"><i class="bi bi-trash"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -849,7 +846,7 @@ function loadArchive() {
 
 // ดูประวัติเดี่ยว
 function viewHistory(id) {
-    apiCall('get_assessment_by_id', { params: { id } })
+    api.getAssessmentById(id)
         .then(data => {
             if (data.success) {
                 currentHistoryResult = data.result;
@@ -868,7 +865,7 @@ function viewHistory(id) {
 
 // เปิดกล่องแก้ไข
 function editHistory(id) {
-    apiCall('get_assessment_by_id', { params: { id } })
+    api.getAssessmentById(id)
         .then(data => {
             if (data.success) {
                 const row = data.result;
@@ -904,7 +901,7 @@ function editHistory(id) {
 // ลบข้อมูลประวัติ
 function deleteHistory(id) {
     if (confirm('ยืนยันการลบรายการประวัติการรักษาชิ้นนี้หรือไม่?')) {
-        apiCall('delete_assessment', { params: { id } })
+        api.deleteAssessment(id)
             .then(data => {
                 if (data.success) loadArchive();
                 else alert('ล้มเหลวในการลบประวัติ: ' + (data.message || 'ไม่ทราบสาเหตุ'));
@@ -949,7 +946,7 @@ function loadUsers() {
     const search = (document.getElementById('user_search') || {}).value || '';
     tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-hourglass-split"></i> กำลังโหลดข้อมูล...</td></tr>';
 
-    apiCall('list_users', { params: { search } })
+    api.listUsers(search)
         .then(data => {
             if (!data.success) {
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">${escapeHTML(data.message || 'ไม่สามารถโหลดข้อมูลได้')}</td></tr>`;
@@ -978,8 +975,8 @@ function loadUsers() {
                         <td>${roleBadgeHTML(u.role)}</td>
                         <td class="text-end">
                             <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-primary" onclick="openEditUser('${u.id}')" title="แก้ไข"><i class="bi bi-pencil"></i></button>
-                                <button class="btn btn-outline-danger" onclick="deleteUser('${u.id}', '${escapeHTML(u.full_name).replace(/'/g, "\\'")}')" title="ลบ"><i class="bi bi-trash"></i></button>
+                                <button class="btn btn-outline-primary" onclick="openEditUser('${escapeHTML(u.id)}')" title="แก้ไข"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-outline-danger" onclick="deleteUser('${escapeHTML(u.id)}', '${escapeHTML(u.full_name).replace(/'/g, "\\'")}')" title="ลบ"><i class="bi bi-trash"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -1026,9 +1023,9 @@ if (addUserForm) {
         btnIcon.classList.add('d-none');
         spinner.classList.remove('d-none');
 
-        const formData = new URLSearchParams(new FormData(addUserForm));
+        const formData = Object.fromEntries(new FormData(addUserForm));
 
-        apiCall('add_user', { body: formData })
+        api.addUser(formData)
             .then(data => {
                 btn.disabled = false;
                 btnText.textContent = 'เพิ่มผู้ใช้งาน';
@@ -1058,7 +1055,7 @@ if (addUserForm) {
 
 // เปิดกล่องแก้ไขผู้ใช้งาน พร้อมดึงข้อมูลปัจจุบันมาแสดง
 function openEditUser(id) {
-    apiCall('list_users')
+    api.listUsers('')
         .then(data => {
             if (!data.success) {
                 alert(data.message || 'ไม่สามารถดึงข้อมูลผู้ใช้งานได้');
@@ -1111,9 +1108,9 @@ if (editUserForm) {
             return;
         }
 
-        const formData = new URLSearchParams(new FormData(editUserForm));
+        const formData = Object.fromEntries(new FormData(editUserForm));
 
-        apiCall('update_user', { body: formData })
+        api.updateUser(formData)
             .then(data => {
                 if (data.success) {
                     const editUserModal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
@@ -1134,7 +1131,7 @@ if (editUserForm) {
 // ลบผู้ใช้งาน
 function deleteUser(id, name) {
     if (confirm(`ยืนยันการลบผู้ใช้งาน "${name}" ออกจากระบบหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
-        apiCall('delete_user', { params: { id } })
+        api.deleteUser(id)
             .then(data => {
                 if (data.success) {
                     loadUsers();
